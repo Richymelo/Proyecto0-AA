@@ -63,10 +63,18 @@ int metodoAlterno(int matriz[MAX][MAX], int n, int fila, int columna) {
 }
 
 // Función para llenar la matriz con el método seleccionado
-void llenarCuadroMagico(int matriz[MAX][MAX], int n, MetodoLlenado metodo) {
+void llenarCuadroMagico(int matriz[MAX][MAX], int n, MetodoLlenado metodo, int metodoSeleccionado) {
     srand(time(NULL)); // Inicializa la semilla para números aleatorios
-    int fila = rand() % n;
-    int columna = rand() % n;
+    int fila, columna;
+    
+    // Si es el método Siamés, empezamos en la columna central de la primera fila
+    if (metodoSeleccionado == 1) {
+        fila = 0;
+        columna = n / 2;
+    } else { // Para otros métodos, elegir una posición aleatoria
+        fila = rand() % n;
+        columna = rand() % n;
+    }
     
     for (int num = 1; num <= n * n; num++) {
         matriz[fila][columna] = num;
@@ -119,9 +127,8 @@ int main() {
     }
     
     // Llenado del cuadro mágico e impresión del resultado
-    llenarCuadroMagico(matriz, n, metodo);
+    llenarCuadroMagico(matriz, n, metodo, opcion);
     imprimirMatriz(matriz, n);
     
     return 0;
 }
-

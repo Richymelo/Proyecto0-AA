@@ -13,7 +13,7 @@ int metodoSiames(int matriz[max][max], int n, int fila, int columna) {
     int nuevaColumna = (columna + 1) % n;
 
     if (matriz[nuevaFila][nuevaColumna] != 0) { 
-        nuevaFila = (fila + 1) % n;  // Move down instead
+        nuevaFila = (fila + 1) % n;
         nuevaColumna = columna;
     }
 

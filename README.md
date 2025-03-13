@@ -10,9 +10,9 @@ El programa permite al usuario generar cuadros mágicos de orden impar (entre 3 
 
 ## Características
 
-- Generación de cuadros mágicos con **diferentes métodos de relleno**.
+- Generación de cuadros mágicos con diferentes métodos de relleno.
 - **Selección aleatoria** de la casilla inicial.
-- Interfaz gráfica intuitiva creada con **GTK y Glade**.
+- Interfaz gráfica  creada con **GTK y Glade**.
 - **Visualización dinámica** de la generación del cuadro.
-- Botones para rellenar **paso a paso** o completar el cuadro de inmediato.
-- Verificación automática de que todas las sumas sean iguales.
+- Botones para rellenar paso a paso o completar el cuadro de inmediato.
+- Verificación  de que todas las sumas sean iguales.

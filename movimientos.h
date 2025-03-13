@@ -55,3 +55,9 @@ int metodoAlterno(int matriz[max][max], int n, int fila, int columna) {
     }
     return nuevaFila * max + nuevaColumna;
 }
+
+//Metodo para generar el numero aleatorio en la posicion inicial
+void generarInicioAleatorio(int orden, int *fila, int *columna) {
+    *fila = rand() % orden;
+    *columna = rand() % orden;
+}

@@ -84,7 +84,7 @@
                 <property name="margin-left">5</property>
                 <property name="margin-right">5</property>
                 <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
+                <property name="margin-bottom">10</property>
                 <property name="label" translatable="yes">Escoja un número impar entre 3 y 21: </property>
               </object>
               <packing>
@@ -120,7 +120,7 @@
                 <property name="margin-left">5</property>
                 <property name="margin-right">5</property>
                 <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
+                <property name="margin-bottom">10</property>
                 <property name="label" translatable="yes">Escoja un movimiento para rellenar el cuadro:</property>
               </object>
               <packing>
@@ -159,7 +159,7 @@
                 <property name="margin-left">20</property>
                 <property name="margin-right">20</property>
                 <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
+                <property name="margin-bottom">10</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -176,7 +176,7 @@
                 <property name="margin-left">20</property>
                 <property name="margin-right">20</property>
                 <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
+                <property name="margin-bottom">10</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -185,14 +185,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="suma_filas">
+              <object class="GtkButton" id="limpiar">
+                <property name="label" translatable="yes">Limpiar cuadro</property>
                 <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="margin-left">5</property>
-                <property name="margin-right">5</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="margin-left">20</property>
+                <property name="margin-right">20</property>
                 <property name="margin-top">20</property>
                 <property name="margin-bottom">20</property>
-                <property name="label" translatable="yes">Suma de las filas: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -201,14 +202,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="suma_columnas">
+              <object class="GtkLabel" id="suma_filas">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-left">5</property>
                 <property name="margin-right">5</property>
-                <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
-                <property name="label" translatable="yes">Suma de las columnas: 0</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="label" translatable="yes">Suma de una de sus filas: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -217,19 +218,51 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="suma_diagonales">
+              <object class="GtkLabel" id="suma_columnas">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="margin-left">5</property>
                 <property name="margin-right">5</property>
-                <property name="margin-top">20</property>
-                <property name="margin-bottom">20</property>
-                <property name="label" translatable="yes">Suma de las diagonales mayores: 0</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="label" translatable="yes">Suma de una de sus columnas: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">9</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="suma_diagonales">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-left">5</property>
+                <property name="margin-right">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="label" translatable="yes">Suma de una de sus diagonales mayores: 0</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">10</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="es_magico">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-left">5</property>
+                <property name="margin-right">5</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="label" translatable="yes">¿És cuadro mágico?</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">11</property>
               </packing>
             </child>
             <child>
@@ -246,7 +279,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">10</property>
+                <property name="position">12</property>
               </packing>
             </child>
           </object>

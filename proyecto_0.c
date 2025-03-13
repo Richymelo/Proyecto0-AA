@@ -4,7 +4,9 @@
                 Fecha: Jueves 13 de marzo del 2025
 
                 Esta sección contiene el main, donde se indica lo que tiene que hacer
-                cada objeto mostrado en la interfaz.
+                cada objeto mostrado en la interfaz. Además se tienen las funciones para
+                crear los cuadros, agregar los números y los movimientos en los que
+                estos aparecen.
 */
 
 #include <gtk/gtk.h>
@@ -12,16 +14,38 @@
 #include <math.h>     // Para calcular los rayos
 #include <stdlib.h>  // Para utilizar rand()
 #include <time.h>    // Para utilizar rand()
+#include "movimientos.h"
 
-#define max 21  // Max size for magic square
+int matriz[max][max];   // Crear la matriz
+int currentNumber = 1;  // Para ir revisando por cuál número se va
+int n = 3;              // Tamaño de la matriz
+int pos = 0;            // Posición en la que se encuentran los números en la matriz
 
-int matriz[max][max];  // Store grid numbers
-int currentNumber = 1; // Track progress for filling one-by-one
-int n = 3;  // Default grid size, updated dynamically
+// Rellenar cuadro con los valores
+void actualizarCuadro(GtkWidget *grid, int n) {
+    GList *celdas = gtk_container_get_children(GTK_CONTAINER(grid));
+    int i = 0;
 
-// Crear el cuadrado
+    for (GList *actual = celdas; actual != NULL; actual = actual->next) {
+        GtkWidget *celda = GTK_WIDGET(actual->data);
+        GtkWidget *etiqueta = gtk_bin_get_child(GTK_BIN(celda));
+        
+        // Convertir número a string para imprimirlo
+        char buffer[5];
+        if(matriz[i / n][i % n] != 0){
+            snprintf(buffer, sizeof(buffer), "%d", matriz[i / n][i % n]);
+        }else{
+            snprintf(buffer, sizeof(buffer), " ");
+        }
+        gtk_label_set_text(GTK_LABEL(etiqueta), buffer);
+
+        i++;
+    }
+    g_list_free(celdas);
+}
+// Crear el cuadrado vacío
 void crear_cuadrado(GtkWidget *cuadrado, int size) {
-    // Limpiar antiguos cuadrados
+    // Limpiar cuadrados antiguos
     GList *celdas = gtk_container_get_children(GTK_CONTAINER(cuadrado));
     for (GList *actual = celdas; actual != NULL; actual = actual->next) {
         gtk_widget_destroy(GTK_WIDGET(actual->data));
@@ -45,60 +69,68 @@ void crear_cuadrado(GtkWidget *cuadrado, int size) {
             // Crear marco alrededor de las celdas
             GtkWidget *marco = gtk_frame_new(NULL);
             gtk_widget_set_size_request(marco, 36, 36);
-            // Crear celdas con un número
+            // Crear celdas con un etiqueta
             GtkWidget *etiqueta = gtk_label_new(buffer);
             gtk_container_add(GTK_CONTAINER(marco), etiqueta);
 
-            // Attach frame to grid (instead of attaching the label directly)
+            // Pegar los marcos a la tabla
             gtk_grid_attach(GTK_GRID(cuadrado), marco, col, fila, 1, 1);
         }
     }
-
+    // Limpiar la matriz de los números que tiene
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matriz[i][j] = 0;
+        }
+    }
+    actualizarCuadro(cuadrado, n);
     gtk_widget_show_all(cuadrado);
 }
 // Definición de tipo de función para métodos de llenado
 typedef int (*MetodoLlenado)(int[max][max], int, int, int);
-
-// Método Siamés clásico: mueve en diagonal arriba-derecha y ajusta si está ocupado
-int metodoSiames(int matriz[max][max], int n, int fila, int columna) {
-    int nuevaFila = (fila - 1 + n) % n;
-    int nuevaColumna = (columna + 1) % n;
-    if (matriz[nuevaFila][nuevaColumna] != 0) {
-        nuevaFila = (fila + 1) % n;
-        nuevaColumna = columna;
+MetodoLlenado metodoSeleccionado = metodoSiames;  // Método por defecto
+// Selección de movimientos de los números
+void movimiento_elegido(GtkComboBoxText *combo, gpointer user_data) {
+    const char *selected_text = gtk_combo_box_text_get_active_text(combo);
+    if (strcmp(selected_text, "Método Siamés") == 0) {
+        metodoSeleccionado = metodoSiames;
+    } else if (strcmp(selected_text, "En L") == 0) { 
+        metodoSeleccionado = metodoEnL;
+    } else if (strcmp(selected_text, "Espiral") == 0) { 
+        metodoSeleccionado = metodoEspiral;
+    } else if (strcmp(selected_text, "Alterno de Diagonales") == 0){
+        metodoSeleccionado = metodoAlterno;
     }
-    return nuevaFila * max + nuevaColumna;
 }
-// Función para llenar la matriz con el método seleccionado
+// Función para llenar la matriz completa con el método seleccionado
 void llenarCuadroMagico(int matriz[max][max], int n, MetodoLlenado metodo) {
     srand(time(NULL)); // Inicializa la semilla para números aleatorios
-    int fila = rand() % n;
-    int columna = rand() % n;
-    
-    for (int num = 1; num <= n * n; num++) {
+    int fila;
+    int columna;
+    if (currentNumber == 1){
+        // Posiciones iniciales
+        if (metodoSeleccionado == metodoSiames || metodoSeleccionado == metodoAlterno) {
+            fila = 0;
+            columna = n/2;
+        } else if (metodoSeleccionado == metodoEnL) {
+            fila = rand() % n;
+            columna = rand() % n;
+        } else if (metodoSeleccionado == metodoEspiral) {
+            fila = (rand() % (n / 2)) * 2 + 1;
+            columna = (rand() % (n / 2)) * 2 + 1;
+        }
+    }else{
+        // Calcular el resto de posiciones
+        fila = pos / max;
+        columna = pos % max;
+    }
+    for (int num = currentNumber; num <= n * n; num++) {
         matriz[fila][columna] = num;
-        int posicion = metodo(matriz, n, fila, columna);
+        int posicion = metodoSeleccionado(matriz, n, fila, columna);
         fila = posicion / max;
         columna = posicion % max;
     }
-}
-// Rellenar cuadro con los valores
-void actualizarCuadro(GtkWidget *grid, int n) {
-    GList *celdas = gtk_container_get_children(GTK_CONTAINER(grid));
-    int i = 0;
-
-    for (GList *actual = celdas; actual != NULL; actual = actual->next) {
-        GtkWidget *celda = GTK_WIDGET(actual->data);
-        GtkWidget *etiqueta = gtk_bin_get_child(GTK_BIN(celda));
-        
-        // Convertir número a string para imprimirlo
-        char buffer[5];
-        snprintf(buffer, sizeof(buffer), "%d", matriz[i / n][i % n]);
-        gtk_label_set_text(GTK_LABEL(etiqueta), buffer);
-
-        i++;
-    }
-    g_list_free(celdas);
+    currentNumber = n * n + 1;
 }
 // Para que no se mueva la línea del panel
 void fijar_panel(GtkPaned *panel, GParamSpec *pspec, gpointer user_data) {
@@ -110,6 +142,7 @@ void fijar_panel(GtkPaned *panel, GParamSpec *pspec, gpointer user_data) {
 }
 // Revisar que el número ingresado sea un número impar
 void validar_size(GtkSpinButton *ingresar_size, gpointer user_data) {
+    currentNumber = 1;
     int valor = gtk_spin_button_get_value_as_int(ingresar_size);
     // Si no es un número impar, ajustar al valor impar más cercano
     if (valor % 2 == 0){
@@ -117,30 +150,60 @@ void validar_size(GtkSpinButton *ingresar_size, gpointer user_data) {
     }
     // Corregir el valor
     gtk_spin_button_set_value(ingresar_size, valor);
-
     // Crear el cuadrado mágico
     GtkWidget *cuadrado = GTK_WIDGET(user_data);
     crear_cuadrado(cuadrado, valor);
 }
-void on_fill_all_clicked(GtkButton *button, gpointer user_data) {
-    llenarCuadroMagico(matriz, n, metodoSiames); // Fill matriz
-    actualizarCuadro(GTK_WIDGET(user_data), n);  // Update UI
+// Llenar todo el cuadro
+void llenar_todo(GtkButton *button, gpointer user_data) {
+    // Paraar si el cuadro está lleno
+    if (currentNumber > n * n){
+        return;
+    }
+    // Agregar todos los números
+    llenarCuadroMagico(matriz, n, metodoSeleccionado);
+    actualizarCuadro(GTK_WIDGET(user_data), n);
 }
-void on_fill_one_clicked(GtkButton *button, gpointer user_data) {
-    static int fila = 0, columna = 0; // Start position
-    
-    if (currentNumber > n * n) return; // Stop if grid is full
-
-    // Place the next number in matriz
+// Llenar los números de uno en uno
+void llenar_uno(GtkButton *button, gpointer user_data) {
+    static int fila = 0, columna = 0;
+    // Posiciones iniciales
+    if (currentNumber == 1){
+        if (metodoSeleccionado == metodoSiames || metodoSeleccionado == metodoAlterno) {
+            fila = 0;
+            columna = n/2;
+        } else if (metodoSeleccionado == metodoEnL) {
+            fila = rand() % n;
+            columna = rand() % n;
+        } else if (metodoSeleccionado == metodoEspiral) {
+            fila = (rand() % (n / 2)) * 2 + 1; 
+            columna = (rand() % (n / 2)) * 2 + 1;
+        }
+    }
+    // Parar si la tabla está llena
+    if (currentNumber > n * n){
+        return;
+    }
     matriz[fila][columna] = currentNumber++;
-
-    // Update UI
     actualizarCuadro(GTK_WIDGET(user_data), n);
 
-    // Get next position
-    int pos = metodoSiames(matriz, n, fila, columna);
-    fila = pos / max;
-    columna = pos % max;
+    // Ir a siguiente posición
+    int posicion = metodoSeleccionado(matriz, n, fila, columna);
+    fila = posicion / max;
+    columna = posicion % max;
+    pos = posicion;
+}
+// Quitar los números de un cuadro
+void limpiar_cuadrado(GtkButton *button, gpointer user_data) {
+    // Resetear variable
+    currentNumber = 1;
+    // Limipiar los números del cuadro
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matriz[i][j] = 0;
+        }
+    }
+    actualizarCuadro(GTK_WIDGET(user_data), n);
 }
 
 
@@ -150,8 +213,10 @@ int main(int argc, char *argv[]) {
     GtkWidget *panel;           // El panel que divide el área de dibujo y el área de interacción
     GtkWidget *size;            // Para escoger el tamaño del cuadro
     GtkWidget *cuadrado;        // Donde se va a crear el cuadrado
+    GtkWidget *menu;            // El usuario selecciona el tipo de movimiento
     GtkWidget *un_valor;        // Botón que llena un valor a la vez
     GtkWidget *todo_cuadrado;   // Botón que llena todo el cuadrado de un solo
+    GtkWidget *boton_limpiar;   // Botón que limpia un cuadro cuando se llena
     GtkWidget *boton_salida;    // Botón para terminar el programa
 
     gtk_init(&argc, &argv);
@@ -168,11 +233,17 @@ int main(int argc, char *argv[]) {
     size = GTK_WIDGET(gtk_builder_get_object(builder, "escoger_tamano"));
     cuadrado = GTK_WIDGET(gtk_builder_get_object(builder, "cuadrado"));
     g_signal_connect(GTK_SPIN_BUTTON(size), "value-changed", G_CALLBACK(validar_size), cuadrado);
+    // Selección de movimientos
+    menu = GTK_WIDGET(gtk_builder_get_object(builder, "menu_movimientos"));
+    g_signal_connect(menu, "changed", G_CALLBACK(movimiento_elegido), NULL);
     // Botones de relleno del cuadrado
     un_valor = GTK_WIDGET(gtk_builder_get_object(builder, "solo_numero"));
-    g_signal_connect(un_valor, "clicked", G_CALLBACK(on_fill_one_clicked), cuadrado);
+    g_signal_connect(un_valor, "clicked", G_CALLBACK(llenar_uno), cuadrado);
     todo_cuadrado = GTK_WIDGET(gtk_builder_get_object(builder, "todo_cuadrado"));
-    g_signal_connect(todo_cuadrado, "clicked", G_CALLBACK(on_fill_all_clicked), cuadrado);
+    g_signal_connect(todo_cuadrado, "clicked", G_CALLBACK(llenar_todo), cuadrado);
+    // Botón que limpia el cuadrado
+    boton_limpiar = GTK_WIDGET(gtk_builder_get_object(builder, "limpiar"));
+    g_signal_connect(boton_limpiar, "clicked", G_CALLBACK(limpiar_cuadrado), cuadrado);
     // El bóton de terminación del programa
     boton_salida = GTK_WIDGET(gtk_builder_get_object(builder, "salir"));
     g_signal_connect(boton_salida, "clicked", G_CALLBACK(gtk_main_quit), NULL);

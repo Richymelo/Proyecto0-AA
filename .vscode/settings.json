@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "gtk.h": "c",
-        "cairo.h": "c"
+        "cairo.h": "c",
+        "cuadrosmagicos": "cpp"
     }
 }

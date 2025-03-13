@@ -9,8 +9,8 @@
 
 // Método Siamés clásico: mueve en diagonal arriba-derecha y ajusta si está ocupado
 int metodoSiames(int matriz[max][max], int n, int fila, int columna) {
-    int nuevaFila = (fila - 1 + n) % n;  // Move up (wrap around)
-    int nuevaColumna = (columna + 1) % n;  // Move right (wrap around)
+    int nuevaFila = (fila - 1 + n) % n;
+    int nuevaColumna = (columna + 1) % n;
 
     if (matriz[nuevaFila][nuevaColumna] != 0) { 
         nuevaFila = (fila + 1) % n;  // Move down instead
@@ -51,6 +51,7 @@ int metodoAlterno(int matriz[max][max], int n, int fila, int columna) {
     int nuevaColumna = (columna - 1 + n) % n;
     if (matriz[nuevaFila][nuevaColumna] != 0) {
         nuevaFila = (fila + 1) % n;
+        nuevaColumna = columna;
     }
     return nuevaFila * max + nuevaColumna;
 }

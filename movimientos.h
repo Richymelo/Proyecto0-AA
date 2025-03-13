@@ -7,7 +7,7 @@
 
 #define max 21  // Tamaño máximo para la matriz
 
-// Método Siamés clásico: mueve en diagonal arriba-derecha y ajusta si está ocupado
+// Método Siamés clásico: mueve en diagonal izquierda-abajo y ajusta si está ocupado
 int metodoSiames(int matriz[max][max], int n, int fila, int columna) {
     int nuevaFila = (fila - 1 + n) % n;
     int nuevaColumna = (columna + 1) % n;
@@ -21,6 +21,7 @@ int metodoSiames(int matriz[max][max], int n, int fila, int columna) {
 }
 
 // Método en L: movimiento en forma de caballo del ajedrez
+// (arriba y a la izquierda) y ajusta si está ocupado
 int metodoEnL(int matriz[max][max], int n, int fila, int columna) {
     int nuevaFila = (fila - 2 + n) % n;
     int nuevaColumna = (columna + 1) % n;
@@ -31,21 +32,20 @@ int metodoEnL(int matriz[max][max], int n, int fila, int columna) {
     return nuevaFila * max + nuevaColumna;
 }
 
-// Método en Espiral: rellena en sentido de espiral alrededor del centro
-int metodoEspiral(int matriz[max][max], int n, int fila, int columna) {
-    int direcciones[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
-    static int dir = 0;
-    int nuevaFila = fila + direcciones[dir][0];
-    int nuevaColumna = columna + direcciones[dir][1];
-    if (nuevaFila < 0 || nuevaFila >= n || nuevaColumna < 0 || nuevaColumna >= n || matriz[nuevaFila][nuevaColumna] != 0) {
-        dir = (dir + 1) % 4;
-        nuevaFila = fila + direcciones[dir][0];
-        nuevaColumna = columna + direcciones[dir][1];
+// Método De la Loubère: mueve en diagonal derecha-arriba y ajusta si está ocupado
+int metodoLouber(int matriz[max][max], int n, int fila, int columna) {
+    int nuevaFila = (fila + 1) % n;
+    int nuevaColumna = (columna - 1 + n) % n;
+
+    if (matriz[nuevaFila][nuevaColumna] != 0) {
+        nuevaFila = (fila - 1 + n) % n;
+        nuevaColumna = columna;
     }
+
     return nuevaFila * max + nuevaColumna;
 }
-
-// Método Alterno de Diagonales: variante del método siamés
+// Método Alterno de Diagonales: variante del método siamés,
+// mueve en diagonal derecha-abajo y ajusta si está ocupado
 int metodoAlterno(int matriz[max][max], int n, int fila, int columna) {
     int nuevaFila = (fila - 1 + n) % n;
     int nuevaColumna = (columna - 1 + n) % n;
@@ -54,10 +54,4 @@ int metodoAlterno(int matriz[max][max], int n, int fila, int columna) {
         nuevaColumna = columna;
     }
     return nuevaFila * max + nuevaColumna;
-}
-
-//Metodo para generar el numero aleatorio en la posicion inicial
-void generarInicioAleatorio(int orden, int *fila, int *columna) {
-    *fila = rand() % orden;
-    *columna = rand() % orden;
 }

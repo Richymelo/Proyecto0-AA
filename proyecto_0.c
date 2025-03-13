@@ -96,8 +96,8 @@ void movimiento_elegido(GtkComboBoxText *combo, gpointer user_data) {
         metodoSeleccionado = metodoSiames;
     } else if (strcmp(selected_text, "En L") == 0) { 
         metodoSeleccionado = metodoEnL;
-    } else if (strcmp(selected_text, "Espiral") == 0) { 
-        metodoSeleccionado = metodoEspiral;
+    } else if (strcmp(selected_text, "Método De la Loubère") == 0) { 
+        metodoSeleccionado = metodoLouber;
     } else if (strcmp(selected_text, "Alterno de Diagonales") == 0){
         metodoSeleccionado = metodoAlterno;
     }
@@ -115,9 +115,9 @@ void llenarCuadroMagico(int matriz[max][max], int n, MetodoLlenado metodo) {
         } else if (metodoSeleccionado == metodoEnL) {
             fila = rand() % n;
             columna = rand() % n;
-        } else if (metodoSeleccionado == metodoEspiral) {
-            fila = (rand() % (n / 2)) * 2 + 1;
-            columna = (rand() % (n / 2)) * 2 + 1;
+        } else if (metodoSeleccionado == metodoLouber) {
+            fila = n-1;
+            columna = n/2;
         }
     }else{
         // Calcular el resto de posiciones
@@ -156,7 +156,7 @@ void validar_size(GtkSpinButton *ingresar_size, gpointer user_data) {
 }
 // Llenar todo el cuadro
 void llenar_todo(GtkButton *button, gpointer user_data) {
-    // Paraar si el cuadro está lleno
+    // Parar si el cuadro está lleno
     if (currentNumber > n * n){
         return;
     }
@@ -175,9 +175,9 @@ void llenar_uno(GtkButton *button, gpointer user_data) {
         } else if (metodoSeleccionado == metodoEnL) {
             fila = rand() % n;
             columna = rand() % n;
-        } else if (metodoSeleccionado == metodoEspiral) {
-            fila = (rand() % (n / 2)) * 2 + 1; 
-            columna = (rand() % (n / 2)) * 2 + 1;
+        } else if (metodoSeleccionado == metodoLouber) {
+            fila = n-1; 
+            columna = n/2;
         }
     }
     // Parar si la tabla está llena
@@ -205,7 +205,47 @@ void limpiar_cuadrado(GtkButton *button, gpointer user_data) {
     }
     actualizarCuadro(GTK_WIDGET(user_data), n);
 }
+// Actualizar etiquetas de suma
+void etiquetas_sumas(int matriz[max][max], int n, GtkBuilder *builder) {
+    char buffer[256];  
+    int sumaFila = 0, sumaColumna = 0, sumaDiagonales = 0;
 
+    GtkWidget *labelFila = GTK_WIDGET(gtk_builder_get_object(builder, "suma_filas"));
+    GtkWidget *labelColumna = GTK_WIDGET(gtk_builder_get_object(builder, "suma_columnas"));
+    GtkWidget *labelDiagonal = GTK_WIDGET(gtk_builder_get_object(builder, "suma_diagonales"));
+
+    //Suma filas
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            sumaFila += matriz[i][j];
+        }
+    }
+    // Suma columnas
+    for (int j = 0; j < n; j++) {
+        for (int i = 0; i < n; i++) {
+            sumaColumna += matriz[i][j];
+        }
+    }
+    // Suma diagonales
+    for (int i = 0; i < n; i++) {
+        sumaDiagonales += matriz[i][i];
+        sumaDiagonales += matriz[i][n - i - 1];
+    }
+    // Cambiar etiquetas
+    snprintf(buffer, sizeof(buffer), "Suma de sus filas: %d", sumaFila/n);
+    gtk_label_set_text(GTK_LABEL(labelFila), buffer);
+
+    snprintf(buffer, sizeof(buffer), "Suma de sus columnas: %d", sumaColumna/n);
+    gtk_label_set_text(GTK_LABEL(labelColumna), buffer);
+
+    snprintf(buffer, sizeof(buffer), "Suma de sus diagonales mayores: %d", sumaDiagonales/2);
+    gtk_label_set_text(GTK_LABEL(labelDiagonal), buffer);
+}
+// Actualizar sumas con botón
+void actualizar_sumas(GtkButton *button, gpointer user_data) {
+    GtkBuilder *builder = user_data;
+    etiquetas_sumas(matriz, n, builder);
+}
 
 int main(int argc, char *argv[]) {
     GtkBuilder *builder;        // Utilizado para obtener los objetos de glade
@@ -217,6 +257,10 @@ int main(int argc, char *argv[]) {
     GtkWidget *un_valor;        // Botón que llena un valor a la vez
     GtkWidget *todo_cuadrado;   // Botón que llena todo el cuadrado de un solo
     GtkWidget *boton_limpiar;   // Botón que limpia un cuadro cuando se llena
+    GtkWidget *labelFila;       // Para la suma de las filas
+    GtkWidget *labelColumna;    // Para la suma de las columnas
+    GtkWidget *labelDiagonal;   // Para la suma de las diagonales
+    GtkWidget *boton_sumas;     // Para actualizar las sumas
     GtkWidget *boton_salida;    // Botón para terminar el programa
 
     gtk_init(&argc, &argv);
@@ -244,6 +288,9 @@ int main(int argc, char *argv[]) {
     // Botón que limpia el cuadrado
     boton_limpiar = GTK_WIDGET(gtk_builder_get_object(builder, "limpiar"));
     g_signal_connect(boton_limpiar, "clicked", G_CALLBACK(limpiar_cuadrado), cuadrado);
+    // Etiquetas de las sumas
+    boton_sumas = GTK_WIDGET(gtk_builder_get_object(builder, "sumas"));
+    g_signal_connect(boton_sumas, "clicked", G_CALLBACK(actualizar_sumas), builder);
     // El bóton de terminación del programa
     boton_salida = GTK_WIDGET(gtk_builder_get_object(builder, "salir"));
     g_signal_connect(boton_salida, "clicked", G_CALLBACK(gtk_main_quit), NULL);

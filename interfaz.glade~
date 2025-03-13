@@ -140,7 +140,7 @@
                 <items>
                   <item id="siames" translatable="yes">Método Siamés</item>
                   <item id="enL" translatable="yes">En L</item>
-                  <item id="espiral" translatable="yes">Espiral</item>
+                  <item id="louber" translatable="yes">Método De la Loubère</item>
                   <item id="diagonal" translatable="yes">Alterno de Diagonales</item>
                 </items>
               </object>
@@ -202,6 +202,23 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="sumas">
+                <property name="label" translatable="yes">Calcular sumas</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="margin-left">20</property>
+                <property name="margin-right">20</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">8</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel" id="suma_filas">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -209,12 +226,12 @@
                 <property name="margin-right">5</property>
                 <property name="margin-top">10</property>
                 <property name="margin-bottom">10</property>
-                <property name="label" translatable="yes">Suma de una de sus filas: 0</property>
+                <property name="label" translatable="yes">Suma de sus filas: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">8</property>
+                <property name="position">9</property>
               </packing>
             </child>
             <child>
@@ -225,12 +242,12 @@
                 <property name="margin-right">5</property>
                 <property name="margin-top">10</property>
                 <property name="margin-bottom">10</property>
-                <property name="label" translatable="yes">Suma de una de sus columnas: 0</property>
+                <property name="label" translatable="yes">Suma de sus columnas: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">9</property>
+                <property name="position">10</property>
               </packing>
             </child>
             <child>
@@ -241,12 +258,12 @@
                 <property name="margin-right">5</property>
                 <property name="margin-top">10</property>
                 <property name="margin-bottom">10</property>
-                <property name="label" translatable="yes">Suma de una de sus diagonales mayores: 0</property>
+                <property name="label" translatable="yes">Suma de sus diagonales mayores: 0</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">10</property>
+                <property name="position">11</property>
               </packing>
             </child>
             <child>
@@ -263,7 +280,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">11</property>
+                <property name="position">12</property>
               </packing>
             </child>
           </object>
